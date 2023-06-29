@@ -18,9 +18,10 @@ jobs:
 
       - name: Release & Tag 생성
         if: github.event.pull_request.merged == true
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1 
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.TAG }}
-          release_name: ${{ env.TAG }}
+          tag: ${{ steps.tag_version.outputs.new_tag }}
+          name: Release ${{ steps.tag_version.outputs.new_tag }}
+          body: ${{ steps.tag_version.outputs.changelog }}

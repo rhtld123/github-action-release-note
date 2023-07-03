@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - name: '이전 Tag 버전 조회'
         id: previoustag
@@ -44,6 +45,7 @@ jobs:
           git checkout master
           git checkout -b release/${{steps.currentVersion.outputs.version}}
           git merge stage
+          git push origin release/${{steps.currentVersion.outputs.version}}
 
-      - name: Master Pull Request 생성
-        run: |
+#      - name: Master Pull Request 생성
+#        run: |

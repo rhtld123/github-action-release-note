@@ -1,0 +1,49 @@
+name: Generate Tag & Create Pull Request
+on:
+  workflow_dispatch:
+    inputs:
+      increaseVersion:
+        description: '버전업 할 버전종류를 입력해주세요.'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: '이전 Tag 버전 조회'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 1.0.0 # tag가 없을 때 1.0.0으로 지정한다.
+      - name: '배포 버전 생성'
+        id: currentVersion
+        run: |
+          IFS=',' read -ra array <<< ${{steps.previoustag.outputs.tag}}
+          if [[ "${{ github.event.inputs.increaseVersion }}" == "major" ]]; then
+            array[0]=$((array[0] + 1))
+          elif [[ "${{ github.event.inputs.increaseVersion }}" == "minor" ]]; then
+            array[1]=$((array[1] + 1))
+          elif [[ "${{ github.event.inputs.increaseVersion }}" == "patch" ]]; then
+            array[2]=$((array[2] + 1))
+          else
+          echo "Invalid version option selected"
+          fi
+          
+          echo "::set-output name=version::${array[0]}.${array[1]}.${array[2]}"
+
+      - name: Release Branch 생성
+        run: |
+          git checkout master
+          git checkout -b release/${{steps.currentVersion.outputs.version}}
+          git merge stage
+
+      - name: Master Pull Request 생성
+        run: |

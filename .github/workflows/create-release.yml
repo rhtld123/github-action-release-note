@@ -19,6 +19,10 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - uses: actions/checkout@v2
+      - name: Get branch names
+        id: branch-name
+        uses: tj-actions/branch-names@v4.9
       - name: '이전 Tag 버전 조회'
         id: previoustag
         run: |

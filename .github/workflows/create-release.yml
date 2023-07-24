@@ -51,7 +51,7 @@ jobs:
         run: |
           git checkout master
           git checkout -b release/${{steps.currentVersion.outputs.version}}
-          git merge origin stage
+          git merge --no-ff stage
           git push origin release/${{steps.currentVersion.outputs.version}}
 
 #      - name: Master Pull Request 생성

@@ -21,12 +21,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: '이전 Tag 버전 조회'
         id: previoustag
         run: |
-          LATEST_TAG=$(git describe --tags --abbrev=0)
-          echo "::set-output name=tag::$(git describe --tags --abbrev=0 $LATEST_TAG^)"
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) --abbrev=0)
+          PREVIOUS_TAG=$(git describe --tags $(git rev-list --tags --skip=1 --max-count=1) --abbrev=0) || echo "No previous tag"
+          echo "::set-output name=tag::$PREVIOUS_TAG"
 
       - name: '배포 버전 생성'
         id: currentVersion

@@ -62,4 +62,5 @@ jobs:
 
       - name: Create PR
         run: |
-          gh pr create --base main --head feature-${{steps.currentVersion.outputs.version}} --title "Version ${{steps.currentVersion.outputs.version}}: New Features" --body "" --repo ${{ github.repository }} --token ${{ secrets.TOKEN }}
+          echo "TOKEN=${{ secrets.TOKEN }}" >> $GITHUB_ENV
+          gh pr create --base main --head release/${{steps.currentVersion.outputs.version}} --title "Version ${{steps.currentVersion.outputs.version}}: New Features" --body "" --repo ${{ github.repository }}

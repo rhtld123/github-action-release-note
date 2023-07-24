@@ -26,8 +26,8 @@ jobs:
       - name: '이전 Tag 버전 조회'
         id: previoustag
         run: |
-          latest_tag=$(git describe --tags --abbrev=0)
-          echo "::set-output name=tag::$latest_tag"
+          LATEST_TAG=$(git describe --tags --abbrev=0)
+          echo "::set-output name=tag::$(git describe --tags --abbrev=0 $LATEST_TAG^)"
 
       - name: '배포 버전 생성'
         id: currentVersion

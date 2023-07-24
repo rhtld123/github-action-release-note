@@ -67,11 +67,5 @@ jobs:
           github_token: ${{ secrets.TOKEN }}
 
       - name: Create PR
-        uses: peter-evans/create-pull-request@v3
-        id: cpr
-        with:
-          token: ${{ secrets.TOKEN }}
-          title: "v${{steps.currentVersion.outputs.version}} 배포"
-          body: "${{ steps.tag_version.outputs.changelog }}"
-          branch: "release/${{steps.currentVersion.outputs.version}}"
-          base: "master"
+        run: |
+          gh pr create --base main --head feature-${{steps.current_version.outputs.version}} --title "Version ${{steps.current_version.outputs.version}}: New Features" --body "${{ steps.tag_version.outputs.changelog }}" --repo ${{ github.repository }} --token ${{ secrets.TOKEN }}

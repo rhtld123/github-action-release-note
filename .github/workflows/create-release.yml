@@ -59,5 +59,18 @@ jobs:
           git merge --no-ff stage
           git push origin release/${{steps.currentVersion.outputs.version}}
 
-#      - name: Master Pull Request 생성
-#        run: |
+      - name: Change Log 받아오기
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.TOKEN }}
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v3
+        id: cpr
+        with:
+          token: ${{ secrets.TOKEN }}
+          title: "v${{steps.currentVersion.outputs.version}} 배포"
+          body: "${{ steps.tag_version.outputs.changelog }}"
+          branch: "release/${{steps.currentVersion.outputs.version}}"
+          base: "master"

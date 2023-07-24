@@ -22,7 +22,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
-          token: ${{ secrets.TOKEN }}
           fetch-depth: 0
 
       - name: '이전 Tag 버전 조회'
@@ -61,6 +60,8 @@ jobs:
           git push origin release/${{steps.currentVersion.outputs.version}}
 
       - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.TOKEN }}
         run: |
           echo "TOKEN=${{ secrets.TOKEN }}" >> $GITHUB_ENV
           gh pr create --base main --head release/${{steps.currentVersion.outputs.version}} --title "Version ${{steps.currentVersion.outputs.version}}: New Features" --body "" --repo ${{ github.repository }}

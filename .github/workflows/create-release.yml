@@ -53,6 +53,7 @@ jobs:
           git config --local user.name "rhtld123"
           
           git checkout master
+          git pull
           git fetch --all
           git checkout -b release/${{steps.currentVersion.outputs.version}}
           git merge --no-ff stage

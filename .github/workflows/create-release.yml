@@ -34,7 +34,7 @@ jobs:
       - name: '배포 버전 생성'
         id: currentVersion
         run: |
-          IFS=',' read -ra array <<< ${{steps.previoustag.outputs.tag}}
+          IFS='.' read -ra array <<< ${{steps.previoustag.outputs.tag}}
           if [[ "${{ github.event.inputs.increaseVersion }}" == "major" ]]; then
             array[0]=$((array[0] + 1))
           elif [[ "${{ github.event.inputs.increaseVersion }}" == "minor" ]]; then

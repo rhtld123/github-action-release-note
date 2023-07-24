@@ -49,7 +49,11 @@ jobs:
 
       - name: Release Branch 생성
         run: |
+          git config --local user.email "rhtld123@gmail.com"
+          git config --local user.name "rhtld123"
+          
           git checkout master
+          git fetch --all
           git checkout -b release/${{steps.currentVersion.outputs.version}}
           git merge --no-ff stage
           git push origin release/${{steps.currentVersion.outputs.version}}

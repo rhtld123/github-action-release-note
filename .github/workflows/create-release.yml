@@ -62,14 +62,9 @@ jobs:
           git merge --no-ff stage
           git push origin release/${{steps.currentVersion.outputs.version}}
 
-      - name: Change Log 받아오기
-        id: tag_version
-        uses: mathieudutour/github-tag-action@v6.1
-        with:
-          github_token: ${{ secrets.TOKEN }}
 
       - name: Create PR
         env:
           GITHUB_TOKEN: ${{ secrets.TOKEN }}
         run: |
-          gh pr create --base master --head release/${{steps.currentVersion.outputs.version}} --title "v${{steps.currentVersion.outputs.version}} 배포" --body "${{ steps.tag_version.outputs.changelog }}"
+          gh pr create --base master --head release/${{steps.currentVersion.outputs.version}} --title "v${{steps.currentVersion.outputs.version}} 배포" --body ""

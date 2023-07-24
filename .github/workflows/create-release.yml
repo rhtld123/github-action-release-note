@@ -22,6 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
+          token: ${{ secrets.TOKEN }}
           fetch-depth: 0
 
       - name: '이전 Tag 버전 조회'

@@ -48,11 +48,13 @@ jobs:
           
           echo "::set-output name=version::${array[0]}.${array[1]}.${array[2]}"
 
-      - name: Release Branch 생성
+      - name: Setup Git configuration
         run: |
           git config --local user.email "rhtld123@gmail.com"
           git config --local user.name "rhtld123"
-          
+
+      - name: Release Branch 생성
+        run: |
           git checkout master
           git pull
           git fetch origin stage:stage
@@ -62,6 +64,6 @@ jobs:
 
       - name: Create PR
         env:
-          GH_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr create --base main --head release/${{steps.currentVersion.outputs.version}} --title "Version ${{steps.currentVersion.outputs.version}}: New Features" --body "" --repo ${{ github.repository }}
+          gh pr create --base main --head release/${{steps.currentVersion.outputs.version}} --title "Version ${{steps.currentVersion.outputs.version}}: New Features" --body ""

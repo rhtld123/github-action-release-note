@@ -41,10 +41,13 @@ jobs:
           IFS='.' read -ra array <<< ${{steps.previoustag.outputs.tag}}
           if [[ "${{ github.event.inputs.increaseVersion }}" == "major" ]]; then
             array[0]=$((array[0] + 1))
+            echo "::debug::test:${array[0]}"
           elif [[ "${{ github.event.inputs.increaseVersion }}" == "minor" ]]; then
             array[1]=$((array[1] + 1))
+            echo "::debug::test:${array[1]}"
           elif [[ "${{ github.event.inputs.increaseVersion }}" == "patch" ]]; then
             array[2]=$((array[2] + 1))
+            echo "::debug::test:${array[2]}"
           else
           echo "Invalid version option selected"
           fi

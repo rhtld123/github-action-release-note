@@ -11,6 +11,9 @@ on:
           - major
           - minor
           - patch
+      mergeBranch:
+        description: 배포할 Feature Branch를 입력해주세요.
+        required: true
 
 jobs:
   build:

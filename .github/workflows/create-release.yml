@@ -59,11 +59,11 @@ jobs:
         run: |
           git checkout master
           git pull
-          git fetch origin
           IFS=',' read -ra branches <<< "${{ github.event.inputs.mergeBranch }}"
           git checkout -b release/${{steps.currentVersion.outputs.version}}
           git push origin release/${{steps.currentVersion.outputs.version}}
           for branch in "${branches[@]}"; do
+            git fetch origin "$branch"
             git merge --no-ff "$branch"
           done
       

@@ -1,4 +1,6 @@
 name: Generate Tag & Create Pull Request
+env:
+  ACTIONS_STEP_DEBUG: true
 on:
   workflow_dispatch:
     inputs:

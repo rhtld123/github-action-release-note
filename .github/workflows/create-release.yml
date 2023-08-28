@@ -21,6 +21,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -61,6 +62,7 @@ jobs:
           git fetch origin
           IFS=',' read -ra branches <<< "${{ github.event.inputs.mergeBranch }}"
           git checkout -b release/${{steps.currentVersion.outputs.version}}
+          git push origin release/${{steps.currentVersion.outputs.version}}
           for branch in "${branches[@]}"; do
             git merge --no-ff "$branch"
           done

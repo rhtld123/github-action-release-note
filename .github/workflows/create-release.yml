@@ -63,9 +63,16 @@ jobs:
         run: |
           git checkout master
           git pull
-          git fetch origin stage:stage
-          git checkout -b release/${{steps.currentVersion.outputs.version}}
-          git merge --no-ff stage
+          git fetch origin
+          
+          IFS=',' read -ra branches <<< "${{ github.event.inputs.mergeBranch }}"
+
+          for branch in "${branches[@]}"; do
+            git checkout -b release/${{steps.currentVersion.outputs.version}}
+            git merge --no-ff "$branch"
+            git push origin release/${{steps.currentVersion.outputs.version}}
+          done
+          
           git push origin release/${{steps.currentVersion.outputs.version}}
 
 

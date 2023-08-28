@@ -11,9 +11,6 @@ on:
           - major
           - minor
           - patch
-      mergeBranch:
-        description: 배포할 Feature Branch를 입력해주세요.
-        required: true
 
 jobs:
   build:
@@ -30,13 +27,26 @@ jobs:
       - name: '이전 Tag 버전 조회'
         id: previoustag
         run: |
-          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) --abbrev=0) || echo "0.0.0"
-          echo "::set-output name=tag::$LATEST_TAG"
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) --abbrev=0)
+          PREVIOUS_TAG=$(git describe --tags $(git rev-list --tags --skip=1 --max-count=1) --abbrev=0) || echo "v0.0.0"
+          CURRENT_TAG_REMOVED_V=${LATEST_TAG:1}
+          echo "::set-output name=tag::$CURRENT_TAG_REMOVED_V"
 
       - name: '배포 버전 생성'
         id: currentVersion
         run: |
           IFS='.' read -ra array <<< ${{steps.previoustag.outputs.tag}}
+          if [[ "${{ github.event.inputs.increaseVersion }}" == "major" ]]; then
+            array[0]=$((array[0] + 1))
+          elif [[ "${{ github.event.inputs.increaseVersion }}" == "minor" ]]; then
+            array[1]=$((array[1] + 1))
+          elif [[ "${{ github.event.inputs.increaseVersion }}" == "patch" ]]; then
+            array[2]=$((array[2] + 1))
+          else
+          echo "Invalid version option selected"
+          fi
+          
+          echo "::set-output name=version::${array[0]}.${array[1]}.${array[2]}"
 
       - name: Setup Git configuration
         run: |

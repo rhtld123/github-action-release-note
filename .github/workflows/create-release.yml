@@ -38,7 +38,6 @@ jobs:
           else
             echo "::set-output name=tag::$TAG"
           fi
-          echo "tag"
 
       - name: '배포 버전 생성'
         id: currentVersion

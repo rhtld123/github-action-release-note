@@ -31,7 +31,7 @@ jobs:
       - name: '이전 Tag 버전 조회'
         id: previoustag
         run: |
-          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) --abbrev=0) || echo "0.0.0")
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) --abbrev=0) || echo "0.0.0"
           echo "::set-output name=tag::$LATEST_TAG"
 
       - name: '배포 버전 생성'

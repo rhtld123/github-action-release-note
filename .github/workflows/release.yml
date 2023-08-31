@@ -18,24 +18,20 @@ jobs:
       - name: 버전 정보 추출(from Branch Name)
         run: echo "TAG=$(echo '${{ steps.branch-name.outputs.current_branch }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_ENV
 
-      - name: Fetch all commits
-        run: git fetch --depth=1 origin +refs/heads/master
+      - name: Change Log 받아오기
+        id: tag_version
+        uses: mathieudutour/github-tag-action@v6.1
+        with:
+          github_token: ${{ secrets.TOKEN }}
+          custom_tag: ${{ env.TAG }}
 
-      - name: Get the commit range
-        id: commitRange
-        run: echo "::set-output name=range::$(git rev-parse origin/master)..HEAD"
-
-      - name: Get the change logs
-        id: changeLogs
-        run: |
-          RANGE="${{ steps.commitRange.outputs.range }}"
-          CHANGELOGS=$(git log --pretty=format:"- %s" $RANGE)
-          echo "::set-output name=changelogs::$CHANGELOGS"
 
       - name: Release & Tag 생성
         if: github.event.pull_request.merged == true
-        uses: ncipollo/release-action@v1 
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         with:
-          tag: ${{ env.TAG }}
-          name: Release ${{ env.TAG }}
-          body: ${{ steps.changeLogs.outputs.changelogs }}
+          tag_name: ${{ env.TAG }}
+          release_name: Release ${{ env.TAG }}
+          body: ${{ steps.tag_version.outputs.changelog }}

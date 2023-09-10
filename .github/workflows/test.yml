@@ -1,0 +1,37 @@
+name: Generate Tag & Create Pull Request Test
+on:
+  workflow_dispatch:
+    inputs:
+      increaseVersion:
+        description: '버전업 할 버전종류를 입력해주세요.'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+          - major
+          - minor
+          - patch
+      mergeBranch:
+        description: 배포할 Feature Branch를 입력해주세요.
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: test
+        uses: rhtld123/create-tag-pull-request@v1.0.0
+        with:
+          increaseVersion: ${{ github.event.inputs.increaseVersion }}
+          mergeBranch: ${{ github.event.inputs.mergeBranch }}
+          token: ${{ secrets.TOKEN }}
+
+

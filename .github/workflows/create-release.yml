@@ -11,6 +11,9 @@ on:
           - major
           - minor
           - patch
+      mergeBranch:
+        description: 배포할 Feature Branch를 입력해주세요.
+        required: true
 
 jobs:
   build:
@@ -18,21 +21,22 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Get branch names
-        id: branch-name
-        uses: tj-actions/branch-names@v4.9
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
       - name: '이전 Tag 버전 조회'
         id: previoustag
         run: |
-          latest_tag=$(git describe --tags --abbrev=0)
-          echo "::set-output name=tag::$latest_tag"
-
+          LATEST_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) --abbrev=0 2>/dev/null || echo "0.0.0")
+          echo "::set-output name=tag::$LATEST_TAG"
       - name: '배포 버전 생성'
         id: currentVersion
         run: |
-          IFS=',' read -ra array <<< ${{steps.previoustag.outputs.tag}}
+          IFS='.' read -ra array <<< ${{steps.previoustag.outputs.tag}}
           if [[ "${{ github.event.inputs.increaseVersion }}" == "major" ]]; then
             array[0]=$((array[0] + 1))
           elif [[ "${{ github.event.inputs.increaseVersion }}" == "minor" ]]; then
@@ -45,12 +49,28 @@ jobs:
           
           echo "::set-output name=version::${array[0]}.${array[1]}.${array[2]}"
 
+      - name: Setup Git configuration
+        run: |
+          git config --local user.email "rhtld123@gmail.com"
+          git config --local user.name "rhtld123"
+
       - name: Release Branch 생성
         run: |
           git checkout master
+          git pull
+          IFS=',' read -ra branches <<< "${{ github.event.inputs.mergeBranch }}"
           git checkout -b release/${{steps.currentVersion.outputs.version}}
-          git merge stage
+          git push origin release/${{steps.currentVersion.outputs.version}}
+          for branch in "${branches[@]}"; do
+            git fetch origin "$branch":"$branch"
+            git merge --no-ff "$branch"
+          done
+          
           git push origin release/${{steps.currentVersion.outputs.version}}
 
-#      - name: Master Pull Request 생성
-#        run: |
+
+      - name: Create PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        run: |
+          gh pr create --base master --head release/${{steps.currentVersion.outputs.version}} --title "v${{steps.currentVersion.outputs.version}} 배포" --body ""

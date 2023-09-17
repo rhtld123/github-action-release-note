@@ -28,7 +28,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: test
-        uses: rhtld123/create-tag-pull-request@v1.0.7
+        uses: rhtld123/create-tag-pull-request@v1.0.8
         with:
           increaseVersion: ${{ github.event.inputs.increaseVersion }}
           mergeBranch: ${{ github.event.inputs.mergeBranch }}

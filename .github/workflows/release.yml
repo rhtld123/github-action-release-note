@@ -32,14 +32,29 @@ jobs:
             const bodyWithoutQuotesAndTrimmed = bodyWithoutQuotes.trim();
             console.log('bodyWithoutQuotesAndTrimmed: ', bodyWithoutQuotesAndTrimmed);
             const result = bodyWithoutQuotesAndTrimmed.replace(/\n/g, '<br/>');
-            return "### 작업 내용 " + result;
+            return "### 작업 내용 <br/>" + result;
       - name: Release & Tag 생성
         if: github.event.pull_request.merged == true
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+        uses: actions/github-script@v5.0.0
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+#        with:
+#          tag_name: ${{ env.TAG }}
+#          release_name: Release ${{ env.TAG }}
+#          body: ${{ steps.pr_body.outputs.result }}
         with:
-          tag_name: ${{ env.TAG }}
-          release_name: Release ${{ env.TAG }}
-          body: ${{ steps.pr_body.outputs.result }}
+          script: |
+            const body = ${{ steps.pr_body.outputs.result }};
+            const bodyWithoutQuotes = body.replace(/\"/gi, "");
+            const pr = await github.rest.repos.createRelease({
+              owner : context.repo.owner,
+              repo : context.repo.repo,
+              tag_name: ${{ env.TAG }},
+              release_name: Release ${{ env.TAG }},
+              body: bodyWithoutQuotes,
+              draft: false,
+              prerelease: false
+            });
+            
 

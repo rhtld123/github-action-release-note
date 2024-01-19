@@ -32,7 +32,7 @@ jobs:
             const bodyWithoutQuotesAndTrimmed = bodyWithoutQuotes.trim();
             console.log('bodyWithoutQuotesAndTrimmed: ', bodyWithoutQuotesAndTrimmed);
             const result = bodyWithoutQuotesAndTrimmed.replace(/\n/g, '<br/>');
-            console.log(`::set-output name=body::${result}`);
+            return "### 작업 내용 " + result;
       - name: Release & Tag 생성
         if: github.event.pull_request.merged == true
         uses: actions/create-release@v1
@@ -41,6 +41,5 @@ jobs:
         with:
           tag_name: ${{ env.TAG }}
           release_name: Release ${{ env.TAG }}
-          body: |
-            ### 작업 내용 
-            ${{ steps.pr_body.outputs.result }}
+          body: ${{ steps.pr_body.outputs.result }}
+

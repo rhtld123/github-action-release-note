@@ -40,5 +40,5 @@ jobs:
           tag_name: ${{ env.TAG }}
           release_name: Release ${{ env.TAG }}
           body: |
-            v${{ env.TAG }} 작업 내용 \n
+            - v${{ env.TAG }} 작업 내용 \n
             ${{ steps.pr_body.outputs.result }}

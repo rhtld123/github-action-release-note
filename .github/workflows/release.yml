@@ -28,7 +28,7 @@ jobs:
               repo : context.repo.repo,
               pull_number : context.issue.number,
             });
-            const bodyWithoutQuotes = pr.data.body.replace(/"/g, '');
+            const bodyWithoutQuotes = pr.data.body.replace(/\"/gi, "");
             return bodyWithoutQuotes.replace(/\n/g, '<br/>');
 
       - name: Release & Tag 생성
@@ -40,5 +40,5 @@ jobs:
           tag_name: ${{ env.TAG }}
           release_name: Release ${{ env.TAG }}
           body: |
-            # 작업 내용 
+            ## 작업 내용 
             ${{ steps.pr_body.outputs.result }}

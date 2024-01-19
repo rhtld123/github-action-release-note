@@ -29,12 +29,10 @@ jobs:
               pull_number : context.issue.number,
             });
             const bodyWithoutQuotes = pr.data.body.replace(/\"/gi, "");
-            console.log('bodyWithoutQuotes: ', bodyWithoutQuotes);
             const bodyWithoutQuotesAndTrimmed = bodyWithoutQuotes.trim();
             console.log('bodyWithoutQuotesAndTrimmed: ', bodyWithoutQuotesAndTrimmed);
             const result = bodyWithoutQuotesAndTrimmed.replace(/\n/g, '<br/>');
-            console.log('result: ', result);
-            return result
+            console.log(`::set-output name=body::${result}`);
       - name: Release & Tag 생성
         if: github.event.pull_request.merged == true
         uses: actions/create-release@v1

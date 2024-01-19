@@ -29,7 +29,7 @@ jobs:
               pull_number : context.issue.number,
             });
             const bodyWithoutQuotes = pr.data.body.replace(/"/g, '');
-            return bodyWithoutQuotes.replace(/\n/g, '  ');
+            return bodyWithoutQuotes.replace(/\n/g, '<br/>');
 
       - name: Release & Tag 생성
         if: github.event.pull_request.merged == true
@@ -40,5 +40,5 @@ jobs:
           tag_name: ${{ env.TAG }}
           release_name: Release ${{ env.TAG }}
           body: |
-            ### 작업 내용 
+            # 작업 내용 
             ${{ steps.pr_body.outputs.result }}

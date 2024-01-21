@@ -47,10 +47,11 @@ jobs:
           script: |
             const body = ${{ steps.pr_body.outputs.result }};
             const bodyWithoutQuotes = body.replace(/\"/gi, "");
+            const tag = ${{ env.TAG }};
             const pr = await github.rest.repos.createRelease({
               owner : context.repo.owner,
               repo : context.repo.repo,
-              tag_name: ${{ env.TAG }},
+              tag_name: tag,
               release_name: Release ${{ env.TAG }},
               body: bodyWithoutQuotes,
               draft: false,

@@ -47,7 +47,7 @@ jobs:
           script: |
             const body = ${{ steps.pr_body.outputs.result }};
             const bodyWithoutQuotes = body.replace(/\"/gi, "");
-            const tag = ${{ env.TAG }};
+            const tag = String(${{ env.TAG }});
             const pr = await github.rest.repos.createRelease({
               owner : context.repo.owner,
               repo : context.repo.repo,
